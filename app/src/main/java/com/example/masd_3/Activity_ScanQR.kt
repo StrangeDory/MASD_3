@@ -1,16 +1,18 @@
 package com.example.masd_3
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Intent
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
+import android.widget.PopupMenu
+import android.widget.TextView
 import android.widget.Toast
-import com.budiyev.android.codescanner.AutoFocusMode
-import com.budiyev.android.codescanner.CodeScanner
-import com.budiyev.android.codescanner.CodeScannerView
-import com.budiyev.android.codescanner.DecodeCallback
-import com.budiyev.android.codescanner.ErrorCallback
-import com.budiyev.android.codescanner.ScanMode
+import androidx.appcompat.app.AppCompatActivity
+import com.budiyev.android.codescanner.*
 import pub.devrel.easypermissions.EasyPermissions
+
 
 class Activity_ScanQR : AppCompatActivity() {
 
@@ -30,6 +32,36 @@ class Activity_ScanQR : AppCompatActivity() {
                 android.Manifest.permission.CAMERA
             )
         }
+
+        val text_view_result = findViewById<TextView>(R.id.text_view_result)
+        text_view_result.setOnLongClickListener {
+            val popupMenu = PopupMenu(this, text_view_result)
+            popupMenu.menuInflater.inflate(R.menu.item_menu_result_qr, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                val id = menuItem.itemId
+                if (id == R.id.menu_copy) {
+                    val summary = text_view_result.text
+                    val clipboardManager = this.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                    clipboardManager.setPrimaryClip(ClipData.newPlainText("", summary))
+                }
+                if (id == R.id.menu_browser) {
+                    try {
+                        val browserIntent =
+                            Intent(Intent.ACTION_VIEW, Uri.parse(text_view_result.text as String?))
+                        startActivity(browserIntent)
+                    } catch (e: Exception) {
+                        Toast.makeText(this, "Could not open in browser!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                false
+            }
+            popupMenu.show()
+            val popup = PopupMenu::class.java.getDeclaredField("mPopup")
+            popup.isAccessible = true
+            val menu = popup.get(popupMenu)
+            menu.javaClass.getDeclaredMethod("setForceShowIcon", Boolean::class.java).invoke(menu, true)
+            false
+        }
     }
 
     private fun startScanning() {
@@ -44,7 +76,7 @@ class Activity_ScanQR : AppCompatActivity() {
 
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
-                Toast.makeText(this, "${it.text}", Toast.LENGTH_SHORT).show()
+                findViewById<TextView>(R.id.text_view_result).text = it.text
             }
         }
 
@@ -56,6 +88,7 @@ class Activity_ScanQR : AppCompatActivity() {
 
         scannerView.setOnClickListener {
             codeScanner.startPreview()
+            findViewById<TextView>(R.id.text_view_result).text = ""
         }
     }
 
@@ -78,6 +111,7 @@ class Activity_ScanQR : AppCompatActivity() {
         super.onResume()
         if (::codeScanner.isInitialized){
             codeScanner.startPreview()
+            findViewById<TextView>(R.id.text_view_result).text = ""
         }
     }
 

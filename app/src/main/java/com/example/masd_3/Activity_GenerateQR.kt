@@ -25,17 +25,12 @@ class Activity_GenerateQR : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_generate_qr)
 
-        val button_generate = findViewById<Button>(R.id.generate)
-        button_generate.setOnClickListener(){
-            val entered_text = findViewById<EditText>(R.id.text_field).text.toString()
-            val encoder = QRGEncoder(entered_text, null, QRGContents.Type.TEXT, 800)
-            findViewById<ImageView>(R.id.qr_code).setImageBitmap(encoder.bitmap)
-        }
-
         val image_qr = findViewById<ImageView>(R.id.qr_code)
 
         findViewById<EditText>(R.id.text_field).addTextChangedListener {
-            image_qr.setImageBitmap(null)
+            val entered_text = findViewById<EditText>(R.id.text_field).text.toString()
+            val encoder = QRGEncoder(entered_text, null, QRGContents.Type.TEXT, 800)
+            findViewById<ImageView>(R.id.qr_code).setImageBitmap(encoder.bitmap)
         }
 
         image_qr.setOnLongClickListener {

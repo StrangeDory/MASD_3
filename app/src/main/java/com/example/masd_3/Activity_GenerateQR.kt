@@ -33,6 +33,10 @@ class Activity_GenerateQR : AppCompatActivity() {
             findViewById<ImageView>(R.id.qr_code).setImageBitmap(encoder.bitmap)
         }
 
+        findViewById<ImageView>(R.id.ivBack).setOnClickListener() {
+            finish()
+        }
+
         image_qr.setOnLongClickListener {
             val popupMenu = PopupMenu(this, image_qr)
             popupMenu.menuInflater.inflate(R.menu.item_menu_save, popupMenu.menu)

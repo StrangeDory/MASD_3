@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
@@ -31,6 +32,10 @@ class Activity_ScanQR : AppCompatActivity() {
                 123,
                 android.Manifest.permission.CAMERA
             )
+        }
+
+        findViewById<ImageView>(R.id.ivBack).setOnClickListener() {
+            finish()
         }
 
         val text_view_result = findViewById<TextView>(R.id.text_view_result)

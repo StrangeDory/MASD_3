@@ -2,8 +2,11 @@ package com.example.masd_3
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -53,6 +56,16 @@ class Activity_GenerateQR : AppCompatActivity() {
                     } else {
                         saveImageToStorage()
                     }
+                }
+                if (id == R.id.menu_share) {
+                    val bitmap = image_qr.drawable.toBitmap()
+                    val intent = Intent()
+                    intent.action = Intent.ACTION_SEND
+                    val path = MediaStore.Images.Media.insertImage(contentResolver, bitmap, "title", null)
+                    val uri = Uri.parse(path)
+                    intent.putExtra(Intent.EXTRA_STREAM, uri)
+                    intent.type = "image/*"
+                    startActivity(Intent.createChooser(intent, "Share to"))
                 }
                 false
             }
